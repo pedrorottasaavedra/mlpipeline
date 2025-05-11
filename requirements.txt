@@ -1,0 +1,13 @@
+azureml-core==1.60.0
+azureml-defaults==1.60.0
+azureml-inference-server-http
+joblib
+pandas
+numpy
+scikit-learn
+keras
+tensorflow
+requests
+arrow
+pytz
+matplotlib
