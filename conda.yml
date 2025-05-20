@@ -1,7 +1,6 @@
 name: agroaurora-env
 dependencies:
   - python=3.9
-  - pip
   - pip:
       - numpy
       - pandas
@@ -13,4 +12,5 @@ dependencies:
       - requests
       - joblib
       - matplotlib
+      - azureml-inference-server-http
 
