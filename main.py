@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
+from typing import Optional
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, Float, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -16,7 +17,7 @@ class Prediccion(Base):
     valor = Column(Float)
     timestamp = Column(String)
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -36,8 +37,19 @@ def insertar_prediccion(entrada: Entrada):
     return {"msg": "Guardado", "id": nueva.id}
 
 @app.get("/predicciones")
-def leer_predicciones():
+def leer_predicciones(
+    tag: Optional[str] = Query(None),
+    start: Optional[str] = Query(None),
+    end: Optional[str] = Query(None)
+):
     db = SessionLocal()
-    datos = db.query(Prediccion).all()
+    query = db.query(Prediccion)
+    if tag:
+        query = query.filter(Prediccion.tag == tag)
+    if start:
+        query = query.filter(Prediccion.timestamp >= start)
+    if end:
+        query = query.filter(Prediccion.timestamp <= end)
+    datos = query.all()
     db.close()
     return datos
