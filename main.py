@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from typing import List
+
 
 # Configuración de base de datos
 DATABASE_URL = "postgresql://fastapi_user:12345@localhost/predicciones"
@@ -30,15 +32,15 @@ app = FastAPI()
 
 # Endpoint para insertar una predicción
 @app.post("/insertar")
-def insertar_prediccion(entrada: Entrada):
+def insertar_predicciones(entradas: List[Entrada]):
     db = SessionLocal()
-    nueva = Prediccion(**entrada.dict())
-    db.add(nueva)
+    nuevas = [Prediccion(**e.dict()) for e in entradas]
+    db.add_all(nuevas)
     db.commit()
-    db.refresh(nueva)
+    for nueva in nuevas:
+        db.refresh(nueva)
     db.close()
-    return {"msg": "Guardado", "id": nueva.id}
-
+    return {"msg": "Guardados", "cantidad": len(nuevas)}
 # Endpoint para consultar predicciones con filtros
 @app.get("/predicciones")
 def leer_predicciones(
