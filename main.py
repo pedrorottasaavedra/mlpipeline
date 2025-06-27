@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from typing import List
+from fastapi.responses import JSONResponse
 
 
 # Configuración de base de datos
@@ -61,3 +62,16 @@ def leer_predicciones(
     datos = query.all()
     db.close()
     return datos
+@app.get("/api/proxy")
+def proxy_grafana():
+    db = SessionLocal()
+    predicciones = db.query(Prediccion).all()
+    db.close()
+    return JSONResponse(content=[
+        {
+            "tag": p.tag,
+            "valor": p.valor,
+            "timestamp": p.timestamp.isoformat()
+        } for p in predicciones
+    ])
+
