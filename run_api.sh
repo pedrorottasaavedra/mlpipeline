@@ -18,8 +18,13 @@ echo "entorno virtual activado"
 echo "lanzando la app para leer el puerto 8000"
 #generando la app lanzada
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload > api.log 2>&1 &
-
 echo "app lanzada"
+
 sleep 10
 
-#g
+#generando el tunel de cloudflare
+echo "generando tunel de Cloudflare"
+cloudflared tunnel --url http://localhost:8000 > cloudflared.log 2>&1 &
+
+echo "probar el cloudflare"
+
